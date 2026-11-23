@@ -1,0 +1,14 @@
+App(
+    appid="lockfin",
+    name="Lockfin",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="login_manager_app",
+    sources=["login_manager.c"],
+    stack_size=4096,
+    requires=["gui", "storage", "loader", "bt"],
+    fap_category="Tools",
+    fap_icon="assets/lockfin_10px.png",
+    fap_version=(0, 25),
+    fap_libs=["mbedtls", "ble_profile"],
+    fap_description="Standalone encrypted password manager",
+)

@@ -1,0 +1,4 @@
+cryptography>=50.0.2,<51
+pyserial==3.5
+ufbt==0.2.6
+PySide6-Essentials==6.12.0

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 256 256">
+  <title>Lockfin</title>
+  <defs>
+    <linearGradient id="tile" x2="0%" y2="100%">
+      <stop stop-color="#241000"/>
+      <stop offset="1" stop-color="#0b0500"/>
+    </linearGradient>
+    <linearGradient id="lock" x2="0%" y2="100%">
+      <stop stop-color="#ff9722"/>
+      <stop offset="1" stop-color="#fe8a2c"/>
+    </linearGradient>
+  </defs>
+  <rect x="25" y="25" width="206" height="206" rx="46" fill="url(#tile)"/>
+  <path d="M94 112V88a34 34 0 0 1 68 0v24" fill="none" stroke="#ff9722" stroke-width="14"/>
+  <rect x="60" y="101" width="136" height="97" rx="20" fill="url(#lock)"/>
+  <!-- Dolphin in profile, stepped on a four-unit grid. -->
+  <path fill="#140900" d="M76 160h12v4h12v-8h4v-8h8v-8h8v-8h-4v-12h8v4h8v4h4v4h8v-4h16v4h8v4h4v8h4v4h8v4h-4v4h-20v-4h-8v4h-8v8h-4v4h-4v4h-8v-8h-8v4h-16v8h-8v4h-8v-4h4v-8h-8v-4h-8z"/>
+  <rect x="164" y="140" width="4" height="4" fill="#ff9722"/>
+</svg>
