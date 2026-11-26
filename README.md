@@ -8,7 +8,7 @@ Keep your logins on your Flipper Zero. Add an account, generate a password, and 
 
 **Watch Lockfin on the Flipper · 1:11**
 
-The sign-in walkthrough is attached to the documentation pull request.
+https://github.com/user-attachments/assets/071d6a79-2f23-46e4-b461-c0cb41be5e99
 
 Manage passwords on the device, type over USB or Bluetooth, and open Authenticator, U2F or **Passkeys (FIDO2)** from Lockfin when you need another sign-in step. Passwords and authentication shortcuts come together in one sign-in workflow; authentication credentials remain with their own apps. See [Authentication integrations](#authentication-integrations) for setup.
 
@@ -24,7 +24,7 @@ Lockfin is my first app for Flipper Zero. If it’s earned a place on your Flipp
 
 **Watch the Companion workflow · 1:05**
 
-The Companion walkthrough is attached to the documentation pull request.
+https://github.com/user-attachments/assets/fe3b1efd-c46f-46c8-9492-eb344eb8e397
 
 **With Companion.** Close qFlipper if it’s open, connect your Flipper to your computer over USB, and launch Lockfin Companion. If Companion offers to install Lockfin, follow the prompt. For a new vault, drop an export into Companion, select the logins you want, and choose **Save encrypted vault**. Set its master password, then choose **Save to Flipper**. To keep the accounts already on your Flipper, follow [Add accounts to your existing Flipper vault](#add-accounts-to-your-existing-flipper-vault) below.
 
