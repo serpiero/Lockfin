@@ -90,6 +90,7 @@ static int storage_common_rename(Storage* s,const char* a,const char* b){(void)s
 '''
         wrappers = r'''
 static LoginManager app;
+int host_header_valid(const uint8_t* header,uint64_t size){return lm_header_valid(header,size);}
 void host_init(Encrypt callback,const uint8_t* key,const uint8_t* salt){lm_release_logins(&app);memset(&app,0,sizeof(app));app.session_key_ready=true;app.rounds=100000;memcpy(app.session_key,key,32);memcpy(app.salt,salt,16);encrypt_callback=callback;fail_sync=fail_rename=0;nonce_counter=0;}
 void host_empty(void){lm_release_logins(&app);app.count=0;}
 int host_record(const char* name,const char* user,const char* pass){
@@ -118,6 +119,7 @@ void host_star(size_t row){assert(row<app.count);app.selected=row;lm_toggle_favo
         cls.lib.host_load.argtypes=[ENCRYPT,U8,U8]
         cls.lib.host_record.argtypes=[ctypes.c_char_p]*3
         cls.lib.host_fail.argtypes=[ctypes.c_int,ctypes.c_int]
+        cls.lib.host_header_valid.argtypes=[U8,ctypes.c_uint64]
 
     @classmethod
     def tearDownClass(cls):
@@ -147,6 +149,16 @@ void host_star(size_t row){assert(row<app.count);app.selected=row;lm_toggle_favo
         self.assertEqual(self.lib.host_record(b'Dummy, account',b'user\\name',b'Dummy,\\Password123'),1)
         self.assertEqual(self.lib.host_save(),1)
         return Path('vault.lmv').read_bytes()
+
+    def test_header_accepts_legacy_current_and_maximum_kdf_cost(self):
+        for magic, length in ((vault.MAGIC, 1), (vault.FAVORITES_MAGIC, 3)):
+            for rounds, expected in ((9_999, False), (10_000, True), (100_000, True),
+                                     (600_000, True), (2_000_000, True), (2_000_001, False)):
+                with self.subTest(magic=magic, rounds=rounds):
+                    header = vault.HEADER.pack(magic, rounds, bytes(16), bytes(12), length)
+                    buffer = (ctypes.c_uint8 * len(header)).from_buffer_copy(header)
+                    self.assertEqual(bool(self.lib.host_header_valid(
+                        buffer, len(header) + length + 16)), expected)
 
     def test_create_edit_and_pc_interoperability(self):
         first=self.initial()

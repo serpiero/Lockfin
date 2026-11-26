@@ -30,15 +30,19 @@ class FavoriteLogin(list):
     """A starred three-field login. Selection and editing keep its marker."""
 
 
-ITERATIONS = 100_000
+ITERATIONS = 600_000
 MIN_ITERATIONS = 10_000
-MAX_ITERATIONS = 500_000
+MAX_ITERATIONS = 2_000_000
 MAX_PAYLOAD = 32_768
 MAX_LOGINS = 500
 
 
 class VaultError(ValueError):
     pass
+
+
+class OutdatedKDFWarning(UserWarning):
+    """La boveda autenticada necesita actualizar su coste de derivacion."""
 
 
 def validate_master(master):
@@ -133,6 +137,13 @@ def unseal(blob, master):
         if count > len(records):
             raise VaultError("Invalid favorite count.")
         records[:count] = [FavoriteLogin(record) for record in records[:count]]
+        if iterations < ITERATIONS:
+            warnings.warn(
+                f"Vault uses {iterations:,} KDF iterations; the current cost is {ITERATIONS:,}. "
+                "Run 'python vault.py passwd <vault.lmv>' to re-encrypt it.",
+                OutdatedKDFWarning,
+                stacklevel=2,
+            )
         return records
     except UnicodeError as exc:
         raise VaultError("Invalid vault contents.") from exc
@@ -182,6 +193,7 @@ def self_test():
     records = [["Demo, uno", "user\\demo", "Ficticia!_123"], ["Demo dos", "", "OtraFicticia"]]
     master = "SoloPruebas123"
     blob = seal(records, master)
+    assert HEADER.unpack_from(blob)[1] == ITERATIONS
     assert unseal(blob, master) == records
     assert b"Ficticia!_123" not in blob and b"user\\demo" not in blob
     assert seal(records, master) != blob
@@ -252,6 +264,9 @@ def main():
     records = unseal(original, master)
     if args.command == "check":
         print(f"Vault verified: {len(records)} accounts.")
+        iterations = HEADER.unpack_from(original)[1]
+        status = "below current" if iterations < ITERATIONS else "meets current cost"
+        print(f"KDF iterations: {iterations:,} ({status}; current: {ITERATIONS:,}).")
         return
     if args.command == "add":
         name = input("Account name: ")

@@ -130,12 +130,20 @@ The release includes `SHA256SUMS` for checking downloaded files. [Release files]
 | Setting | Details |
 |---|---|
 | Active vault on the Flipper | `/ext/apps_data/lockfin/vault.lmv` |
-| Vault format | LMV1, or LMV2 when favorites are present; AES-256-GCM and PBKDF2-HMAC-SHA256 with 100,000 iterations |
+| Vault format | LMV1, or LMV2 when favorites are present; AES-256-GCM and PBKDF2-HMAC-SHA256; the current source uses 600,000 iterations for new or re-encrypted vaults |
 | Capacity | Up to 500 accounts, 99 bytes per field, and 32 KiB of plaintext payload per vault |
 | Master password | 8–63 printable ASCII characters |
 | Quick PIN | Six digits. Three failed attempts disable quick unlock until you enroll again. The PIN is visible during entry. |
 | Keyboard layouts | US English, Spanish (Spain), and Spanish (Latin America). Choose the layout matching your computer under **Manage → Keyboard layout**. |
 | Typed characters | Printable ASCII |
+
+### KDF compatibility and device timing
+
+The current source creates and re-encrypts vaults with **600,000 PBKDF2-HMAC-SHA256 iterations** and accepts header costs from 10,000 through 2,000,000. Existing vaults keep their stored cost and remain readable. Companion/CLI warns after successfully opening an older-cost vault; use `python vault.py passwd <vault.lmv>` to re-encrypt it. `python vault.py check <vault.lmv>` reports its iteration count and whether it is below the current cost.
+
+The published Companion 0.6.8 and Flipper 0.25 binaries predate this source change: they write 100,000 iterations and reject costs above 500,000. Update both sides from compatible builds before transferring a newly upgraded vault. The LMV1/LMV2 format, 40-byte header and header authentication as GCM AAD are unchanged.
+
+**Device unlock timing at 600,000 iterations:** pending measurement on a physical Flipper. No desktop estimate is presented as a device result.
 
 ## License and credits
 
