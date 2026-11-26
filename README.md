@@ -6,6 +6,10 @@ Passwords · Authenticator · U2F · Passkeys (FIDO2)
 
 Keep your logins on your Flipper Zero. Add an account, generate a password, and mark it as a favorite right on the device. When you need to sign in, pick the account and let your Flipper type the username and password over USB or Bluetooth.
 
+**Watch Lockfin on the Flipper · 1:11**
+
+The sign-in walkthrough is attached to the documentation pull request.
+
 Manage passwords on the device, type over USB or Bluetooth, and open Authenticator, U2F or **Passkeys (FIDO2)** from Lockfin when you need another sign-in step. Passwords and authentication shortcuts come together in one sign-in workflow; authentication credentials remain with their own apps. See [Authentication integrations](#authentication-integrations) for setup.
 
 Already have your passwords somewhere else? **Lockfin Companion** helps you install Lockfin, bring in the accounts you choose, and save them to your Flipper. You can add them to an existing vault and keep your other logins and favorites.
@@ -17,6 +21,10 @@ Already have your passwords somewhere else? **Lockfin Companion** helps you inst
 Lockfin is my first app for Flipper Zero. If it’s earned a place on your Flipper, I’d really appreciate a star on GitHub. And if you know someone who would enjoy using their Flipper this way, sharing the project with them helps more people find it. [Star Lockfin on GitHub](https://github.com/serpiero/Lockfin)
 
 ## Get started
+
+**Watch the Companion workflow · 1:05**
+
+The Companion walkthrough is attached to the documentation pull request.
 
 **With Companion.** Close qFlipper if it’s open, connect your Flipper to your computer over USB, and launch Lockfin Companion. If Companion offers to install Lockfin, follow the prompt. For a new vault, drop an export into Companion, select the logins you want, and choose **Save encrypted vault**. Set its master password, then choose **Save to Flipper**. To keep the accounts already on your Flipper, follow [Add accounts to your existing Flipper vault](#add-accounts-to-your-existing-flipper-vault) below.
 
