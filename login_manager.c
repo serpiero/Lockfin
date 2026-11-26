@@ -32,6 +32,8 @@
 #define LM_TEMP_PATH EXT_PATH("apps_data/lockfin/.vault.lmv.tmp")
 #define LM_BACKUP_PATH EXT_PATH("apps_data/lockfin/vault.lmv.bak")
 #define LM_HEADER_SIZE 40
+#define LM_KDF_ITERATIONS 600000u
+#define LM_KDF_MAX_ITERATIONS 2000000u
 #define LM_MAX_PAYLOAD 32768
 #define LM_MASTER_SIZE 64
 #define LM_MAX_LOGINS 500
@@ -241,7 +243,7 @@ static bool lm_header_valid(const uint8_t* header, uint64_t file_size) {
     uint32_t rounds = lm_read_le32(header + 4);
     uint32_t length = lm_read_le32(header + 36);
     bool v2 = memcmp(header, "LMV2", 4) == 0;
-    return (v2 || memcmp(header, "LMV1", 4) == 0) && rounds >= 10000 && rounds <= 500000 &&
+    return (v2 || memcmp(header, "LMV1", 4) == 0) && rounds >= 10000 && rounds <= LM_KDF_MAX_ITERATIONS &&
            length > (v2 ? 2u : 0u) && length <= LM_MAX_PAYLOAD + (v2 ? 2u : 0u) &&
            file_size == (uint64_t)LM_HEADER_SIZE + length + 16;
 }
@@ -878,12 +880,12 @@ static bool lm_change_master(LoginManager* app, Gui* gui, bool create) {
     bool ok = lm_new_master(gui, master);
     if(ok) {
         furi_hal_random_fill_buf(salt, sizeof(salt));
-        ok = lm_derive_key(master, salt, 100000, key);
+        ok = lm_derive_key(master, salt, LM_KDF_ITERATIONS, key);
     }
     lm_clear(master, sizeof(master));
     if(ok) {
         memcpy(app->salt, salt, 16); memcpy(app->session_key, key, 32);
-        app->rounds = 100000; app->session_key_ready = true;
+        app->rounds = LM_KDF_ITERATIONS; app->session_key_ready = true;
         ok = lm_save(app);
         if(ok) {
             app->vault_state = VaultReady;
