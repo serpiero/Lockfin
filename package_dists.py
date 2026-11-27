@@ -10,7 +10,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / 'dist' / 'pc'
 VERSION = '0.6.8'
-FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c']
+FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c','requirements.lock']
 
 
 def build():
