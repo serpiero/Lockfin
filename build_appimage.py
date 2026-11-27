@@ -11,7 +11,7 @@ import sys
 import urllib.request
 
 ROOT = Path(__file__).resolve().parent
-VERSION = '0.6.8'
+VERSION = '0.6.9'
 TOOLS = ROOT / '.tools'
 
 
@@ -25,6 +25,11 @@ def build():
     if not shutil.which('mksquashfs'):
         raise SystemExit('squashfs-tools is required.')
     TOOLS.mkdir(exist_ok=True)
+    lock = ROOT / 'requirements.lock'
+    if not lock.is_file():
+        raise SystemExit('Missing requirements.lock; refusing an unlocked build.')
+    run(sys.executable, '-m', 'pip', '--isolated', '--cache-dir', str(TOOLS / 'pip-cache'),
+        'install', '--index-url', 'https://pypi.org/simple', '--require-hashes', '-r', str(lock))
     run(sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
         '--onedir', '--windowed', '--name', 'Lockfin',
         '--distpath', str(TOOLS / 'pyinstaller-dist'),
@@ -59,10 +64,11 @@ def build():
     source = appdir / 'usr/share/lockfin/source'
     source.mkdir(parents=True)
     for name in ('desktop.py', 'device_storage.py', 'flipper_sync.py', 'importers.py', 'vault.py', 'start.py',
-                 'build_appimage.py', 'login_manager.c', 'application.fam', 'requirements.txt', 'requirements.lock', 'LICENSE'):
+                 'build_appimage.py', 'package_dists.py', 'login_manager.c', 'application.fam', 'requirements.txt', 'requirements.lock', 'requirements-build.txt', 'README.md', 'LICENSE'):
         shutil.copy2(ROOT / name, source / name)
     shutil.copytree(ROOT / 'assets', source / 'assets')
     shutil.copytree(ROOT / 'third_party/qflipper', source / 'third_party/qflipper')
+    shutil.copytree(ROOT / 'tests', source / 'tests', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
 
     # Optional local secret audit; neither the export nor its path enters the bundle.
     export = os.environ.get('LOCKFIN_AUDIT_EXPORT')

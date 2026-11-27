@@ -14,7 +14,9 @@ Manage passwords on the device, type over USB or Bluetooth, and open Authenticat
 
 Already have your passwords somewhere else? **Lockfin Companion** helps you install Lockfin, bring in the accounts you choose, and save them to your Flipper. You can add them to an existing vault and keep your other logins and favorites.
 
-[Download Lockfin and Companion](https://github.com/serpiero/Lockfin/releases/tag/v0.6.8)
+**Preparing Companion 0.6.9 and Lockfin 0.26 — not published yet.**
+
+[Download Lockfin and Companion](https://github.com/serpiero/Lockfin/releases)
 
 ## Support Lockfin
 
@@ -104,26 +106,26 @@ Both the Momentum and official-firmware Lockfin builds include shortcuts to Auth
 
 ## Compatibility and manual installation
 
-**Lockfin 0.25 for Flipper Zero**
+**Lockfin 0.26 for Flipper Zero**
 
 | Firmware | API | Release file |
 |---|---|---|
-| Momentum 012 | 87.1 | `Lockfin-0.25-Momentum-012-API-87.1.fap` |
-| Official 1.5.1 | 88.2 | `Lockfin-0.25-Official-1.5.1-API-88.2.fap` |
+| Momentum 012 | 87.1 | `Lockfin-0.26-Momentum-012-API-87.1.fap` |
+| Official 1.5.1 | 88.2 | `Lockfin-0.26-Official-1.5.1-API-88.2.fap` |
 
 Companion detects Momentum 012 and Official 1.5.1 and offers the matching Lockfin build when the app is missing. Existing installations are preserved. For manual installation on either firmware, download the matching `.fap` and copy it to the SD card as `/ext/apps/Tools/lockfin.fap`. Both Lockfin builds include the authentication shortcuts described above. Authenticator and FIDO2 require separate provider builds compatible with the selected firmware and API.
 
-**Lockfin Companion 0.6.8**
+**Lockfin Companion 0.6.9**
 
 | Platform | Release file | Status |
 |---|---|---|
-| Linux x86_64 | `Lockfin-0.6.8-x86_64.AppImage` | Tested locally |
-| Windows | `Lockfin-0.6.8-Windows-Python.zip` | Published for testing. Windows validation pending. |
-| macOS Apple Silicon | `Lockfin-0.6.8-macOS-Apple-Silicon.app.zip` | Published for testing. macOS validation pending. |
+| Linux x86_64 | `Lockfin-0.6.9-x86_64.AppImage` | Tested locally |
+| Windows | `Lockfin-0.6.9-Windows-Python.zip` | New build pending; Windows validation pending. |
+| macOS Apple Silicon | `Lockfin-0.6.9-macOS-Apple-Silicon.app.zip` | Native build pending; macOS validation pending. |
 
 **Launch Companion.** On Linux, make the AppImage executable and run it. On Windows, extract the ZIP and launch `Iniciar.cmd`; Python 3.10 or newer is required, and the launcher prepares a local environment and installs dependencies on first launch. On macOS Apple Silicon, extract the ZIP and open `Lockfin.app`. Windows and macOS launch instructions still need validation on those systems.
 
-The release includes `SHA256SUMS` for checking downloaded files. [Release files](https://github.com/serpiero/Lockfin/releases/tag/v0.6.8)
+The release includes `SHA256SUMS` for checking downloaded files. [Release files](https://github.com/serpiero/Lockfin/releases)
 
 ## Vault and keyboard details
 
@@ -137,11 +139,17 @@ The release includes `SHA256SUMS` for checking downloaded files. [Release files]
 | Keyboard layouts | US English, Spanish (Spain), and Spanish (Latin America). Choose the layout matching your computer under **Manage → Keyboard layout**. |
 | Typed characters | Printable ASCII |
 
+### Reproducible builds
+
+Create an isolated Python environment and install runtime and packaging dependencies with `python -m pip install --require-hashes -r requirements.lock`. PyInstaller is pinned in that lock. The AppImage builder repeats this hash-checked installation before freezing the application.
+
+FAP builders install uFBT separately with `python -m pip install -r requirements-build.txt`; uFBT and its command-line parsing dependencies are excluded from the runtime lock. Use the SDK matching Momentum 012 / API 87.1 or Official 1.5.1 / API 88.2. Both FAPs must be rebuilt from the same current `login_manager.c` before packaging Companion.
+
 ### KDF compatibility and device timing
 
 The current source creates and re-encrypts vaults with **600,000 PBKDF2-HMAC-SHA256 iterations** and accepts header costs from 10,000 through 2,000,000. Existing vaults keep their stored cost and remain readable. Companion/CLI warns after successfully opening an older-cost vault; use `python vault.py passwd <vault.lmv>` to re-encrypt it. `python vault.py check <vault.lmv>` reports its iteration count and whether it is below the current cost.
 
-The published Companion 0.6.8 and Flipper 0.25 binaries predate this source change: they write 100,000 iterations and reject costs above 500,000. Update both sides from compatible builds before transferring a newly upgraded vault. The LMV1/LMV2 format, 40-byte header and header authentication as GCM AAD are unchanged.
+Earlier published binaries predate this source change: they write 100,000 iterations and reject costs above 500,000. Update both sides from compatible builds before transferring a newly upgraded vault. The LMV1/LMV2 format, 40-byte header and header authentication as GCM AAD are unchanged.
 
 **Device unlock timing at 600,000 iterations:** pending measurement on a physical Flipper. No desktop estimate is presented as a device result.
 

@@ -1,5 +1,5 @@
 /*
- * Lockfin 0.3: standalone FAP, encrypted vault and manual USB actions.
+ * Lockfin 0.26: boveda cifrada y acciones manuales de teclado USB/BLE.
  * Keyboard mapping: US. No automatic Tab, Enter, or credential submission.
  */
 #include <furi.h>
