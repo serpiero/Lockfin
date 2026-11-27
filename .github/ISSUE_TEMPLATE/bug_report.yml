@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a reproducible Lockfin problem using dummy credentials only.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never attach real vaults, exports, passwords, PINs, keys or personal device identifiers.
+        For security vulnerabilities, use SECURITY.md and report privately.
+  - type: input
+    id: version
+    attributes:
+      label: Lockfin and Companion versions
+      description: Include the commit if built from source.
+      placeholder: Flipper 0.26 / Companion 0.6.9
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware and API version
+      placeholder: Momentum 012 / API 87.1, or not applicable
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Host platform and connection
+      description: OS/version, CPU architecture, USB or BLE; Python version for source launches.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps with dummy logins
+      description: Give minimal numbered steps and dummy data that reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result and sanitized error
+      description: Remove credentials, personal paths and device identifiers from logs.
+    validations:
+      required: true
