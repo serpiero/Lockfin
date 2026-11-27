@@ -1,5 +1,7 @@
 # Lockfin
 
+[![Checks](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml/badge.svg?branch=hardening)](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml?query=branch%3Ahardening)
+
 **Your all-in-one login and password manager for Flipper Zero.**
 
 Passwords · Authenticator · U2F · Passkeys (FIDO2)
