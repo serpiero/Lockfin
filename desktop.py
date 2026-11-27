@@ -4,6 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from hashlib import md5
 import argparse
+import json
 import os
 import sys
 import tempfile
@@ -630,10 +631,23 @@ class VaultApp:
         status = label('LOCAL ENCRYPTION  ·  NO CLOUD', 16, '#ce8647', 'ProggySquareTT')
         self.status = SimpleNamespace(set=status.setText)
         footer = QHBoxLayout(); footer.addWidget(status, 1)
+        about = action_button('About')
+        about.clicked.connect(self.about)
+        footer.addWidget(about)
         footer.addWidget(QSizeGrip(self.root))
         layout.addLayout(footer)
         self.root.setCentralWidget(frame)
         self.refresh()
+
+    def about(self):
+        QMessageBox.about(self.root, 'About Lockfin',
+            f'Lockfin Companion {VERSION} · GPL-3.0<br><br>'
+            'PySide6 / Shiboken6 and Qt 6.12.0, The Qt Company Ltd. and contributors.<br>'
+            'PySide6 and Shiboken6: LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only.<br>'
+            'Qt modules: LGPLv3 / GPLv3 and third-party licenses.<br>'
+            'Full license texts and notices: third_party/pyside6/NOTICE.md and licenses/.<br>'
+            'Native bundles include public application source in source/.<br><br>'
+            'Unofficial third-party tool, not affiliated with Flipper Devices Inc.')
 
     def watch_device(self):
         attached = device.connected_device()
@@ -1133,6 +1147,7 @@ class VaultApp:
 def main():
     parser = argparse.ArgumentParser(description='Lockfin companion')
     parser.add_argument('--smoke-test', action='store_true')
+    parser.add_argument('--smoke-test-report', type=Path)
     parser.add_argument('--version', action='version', version=VERSION)
     args = parser.parse_args()
     # The Linux bundle ships the desktop portal plugin. KDE's host Qt
@@ -1156,7 +1171,10 @@ def main():
             assert app.root.findChild(GridPanel).animation.isActive()
             assert app.root.width() == 440
             assert app.root.height() == 540
-            print('LOCKFIN_SMOKE_OK: frameless 440x540, original qFlipper scanline, bundled fonts.')
+            if args.smoke_test_report:
+                args.smoke_test_report.write_text(json.dumps({'version': VERSION, 'smoke_test': 'passed'}))
+            if sys.stdout is not None:
+                print('LOCKFIN_SMOKE_OK: frameless 440x540, original qFlipper scanline, bundled fonts.')
             app.root.close(); qt.processEvents()
         return 0
     app = VaultApp(); app.root.show()

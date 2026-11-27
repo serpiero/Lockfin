@@ -1,0 +1,2 @@
+# Conservar literalmente los textos de licencia publicados por Qt.
+third_party/pyside6/licenses/* -whitespace

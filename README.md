@@ -143,10 +143,14 @@ Companion detects Momentum 012 and Official 1.5.1 and offers the matching Lockfi
 | Platform | Release file | Status |
 |---|---|---|
 | Linux x86_64 | `Lockfin-0.6.9-x86_64.AppImage` | Tested locally |
-| Windows | `Lockfin-0.6.9-Windows-Python.zip` | New build pending; Windows validation pending. |
-| macOS Apple Silicon | `Lockfin-0.6.9-macOS-Apple-Silicon.app.zip` | Native build pending; macOS validation pending. |
+| Windows x86_64 | `Lockfin-0.6.9-Windows-Setup.exe` | Native installer; unsigned; runner validation required. |
+| macOS Apple Silicon | `Lockfin-0.6.9-macOS-Apple-Silicon.dmg` | Native DMG; ad-hoc only, not notarized; runner validation required. |
 
-**Launch Companion.** On Linux, make the AppImage executable and run it. On Windows, extract the ZIP and launch `Iniciar.cmd`; Python 3.10 or newer is required, and the launcher prepares a local environment and installs dependencies on first launch. On macOS Apple Silicon, extract the ZIP and open `Lockfin.app`. Windows and macOS launch instructions still need validation on those systems.
+**Launch Companion.** On Linux, make the AppImage executable and run it. On Windows x86_64, use the Setup EXE; Python is bundled. On Apple Silicon macOS, open the DMG and drag **Lockfin.app** to **Applications**. Intel Macs are not supported by this runtime lock. The `*-Python.zip` files are optional source packages and require Python 3.10+; they are not native installers.
+
+**Unsigned builds.** Until signing certificates are available, Windows installers have no Authenticode signature; macOS bundles have only an ad-hoc signature, no Developer ID and no notarization. After verifying the download and its checksum, Windows SmartScreen may offer **More info → Run anyway**. On macOS, try opening the app once, then use **System Settings → Privacy & Security → Open Anyway** and confirm **Open** if you trust it. Organization policies can prevent these overrides. Do not disable system protections globally. [Apple's instructions](https://support.apple.com/en-us/102445)
+
+**Build natively.** Install from `requirements.lock` with `--require-hashes`, prepare both matching FAPs, then run `python tools/build_windows.py` on Windows x86_64 (Inno Setup 6 required) or `python tools/build_macos.py` on Apple Silicon macOS (Xcode command-line tools required). The builders repeat the hash-checked install, bundle Qt/PySide6 notices and public application source, run the packaged executable's smoke test, and write `SHA256SUMS` plus an artifact-specific `.runtime.txt`. The Windows installer is also installed silently and its installed app tested; the DMG is mounted read-only and its app tested. These checks do not establish USB/BLE interoperability or visual correctness on every desktop.
 
 The release includes `SHA256SUMS` for checking downloaded files. [Release files](https://github.com/serpiero/Lockfin/releases)
 
