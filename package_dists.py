@@ -8,10 +8,12 @@ import re
 import shutil
 import zipfile
 
+from tools.build_common import write_checksums
+
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / 'dist' / 'pc'
 VERSION = '0.6.9'
-FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c','requirements-build.txt']
+FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c','requirements-build.txt', 'third_party/pyside6/NOTICE.md', 'third_party/pyside6/licenses/LGPL-3.0-only', 'third_party/pyside6/licenses/GPL-3.0-only', 'third_party/pyside6/licenses/Qt-GPL-exception-1.0']
 
 
 def filtered_runtime_lock(path):
@@ -61,7 +63,6 @@ def build():
         'Linux': ('Iniciar.sh', '#!/bin/sh\ncd "$(dirname "$0")" || exit 1\nexec python3 start.py\n'),
     }
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    checksums=[]
     for platform,(launcher,content) in launchers.items():
         name=f'Lockfin-{VERSION}-{platform}-Python.zip'
         target=OUTPUT/name;temp=OUTPUT/(name+'.tmp')
@@ -82,9 +83,8 @@ def build():
             assert archive.testzip() is None
             assert not any(n.lower().endswith(('.json','.lmv','.csv','.xml','.tsv'))
                            for n in archive.namelist())
-        checksums.append(hashlib.sha256(target.read_bytes()).hexdigest()+'  '+name)
         print(name, target.stat().st_size, 'bytes: contenido publico verificado')
-    (OUTPUT/'SHA256SUMS').write_text('\n'.join(checksums)+'\n')
+    write_checksums()
     return OUTPUT
 
 

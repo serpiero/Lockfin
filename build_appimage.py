@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a native Linux AppImage from explicitly selected public resources."""
 from pathlib import Path
+from importlib import metadata
 import hashlib
 import json
 import os
@@ -9,6 +10,8 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+
+from tools.build_common import copy_source, write_checksums
 
 ROOT = Path(__file__).resolve().parent
 VERSION = '0.6.9'
@@ -37,6 +40,7 @@ def build():
         '--add-data', f'{ROOT / "assets/fonts"}:assets/fonts',
         '--add-data', f'{ROOT / "assets/lockfin.svg"}:assets',
         '--add-data', f'{ROOT / "third_party/qflipper"}:third_party/qflipper',
+        '--add-data', f'{ROOT / "third_party/pyside6"}:third_party/pyside6',
         '--add-data', f'{ROOT / "LICENSE"}:.',
         '--add-data', f'{ROOT / "dist/lockfin.fap"}:Flipper',
         '--add-data', f'{ROOT / "dist/official/lockfin.fap"}:Flipper/official',
@@ -62,13 +66,7 @@ def build():
 
     # Ship corresponding application source, including the unmodified upstream effect.
     source = appdir / 'usr/share/lockfin/source'
-    source.mkdir(parents=True)
-    for name in ('desktop.py', 'device_storage.py', 'flipper_sync.py', 'importers.py', 'vault.py', 'start.py',
-                 'build_appimage.py', 'package_dists.py', 'login_manager.c', 'application.fam', 'requirements.txt', 'requirements.lock', 'requirements-build.txt', 'README.md', 'LICENSE'):
-        shutil.copy2(ROOT / name, source / name)
-    shutil.copytree(ROOT / 'assets', source / 'assets')
-    shutil.copytree(ROOT / 'third_party/qflipper', source / 'third_party/qflipper')
-    shutil.copytree(ROOT / 'tests', source / 'tests', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    copy_source(source)
 
     # Optional local secret audit; neither the export nor its path enters the bundle.
     export = os.environ.get('LOCKFIN_AUDIT_EXPORT')
@@ -116,7 +114,13 @@ def build():
     (output / f'{target.name}.runtime.txt').write_text(
         f'Official runtime: {asset["browser_download_url"]}\n{digest}\n'
         f'Build host: {platform.platform()}\n'
+        f'Python: {sys.version.split()[0]}\n'
+        f'PyInstaller: {metadata.version("PyInstaller")}\n'
+        f'PySide6-Essentials: {metadata.version("PySide6-Essentials")}\n'
+        f'cryptography: {metadata.version("cryptography")}\n'
+        'Source commit: ' + subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip() + '\n'
         'Built and smoke-tested on Arch Linux; older distributions are untested.\n')
+    write_checksums()
     print(f'APPIMAGE_OK: {target.name} ({target.stat().st_size} bytes)')
     return target
 
