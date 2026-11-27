@@ -139,6 +139,12 @@ The release includes `SHA256SUMS` for checking downloaded files. [Release files]
 | Keyboard layouts | US English, Spanish (Spain), and Spanish (Latin America). Choose the layout matching your computer under **Manage → Keyboard layout**. |
 | Typed characters | Printable ASCII |
 
+### Device unlock measurements
+
+Physical Momentum 012 measurements at 600,000 iterations: master password median **<X> s** over three runs; Quick PIN median **<Y> s** over three runs. **These are placeholders, not measured results.** Time from submitting the credential to the unlocked account list. Quick PIN unwraps a device-bound key and does not repeat PBKDF2.
+
+Hardware validation is pending: measure all six runs, confirm the master-password percentage and Quick PIN loading state on Momentum 012 and Official 1.5.1, and open a dummy vault actually created by Lockfin 0.25 in 0.26. The updated app displays an older-KDF notice after either successful unlock route. Synthetic legacy-format tests establish format compatibility; they do not replace this device check.
+
 ### Reproducible builds
 
 Create an isolated Python environment and install runtime and packaging dependencies with `python -m pip install --require-hashes -r requirements.lock`. PyInstaller is pinned in that lock. The AppImage builder repeats this hash-checked installation before freezing the application.
