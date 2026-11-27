@@ -306,6 +306,12 @@ static bool lm_derive_key(
             for(size_t j = 0; j < 32; ++j) key[j] ^= u[j];
         }
     }
+    /* La ultima iteracion no coincide necesariamente con el refresco de 1024. */
+    if(ok) {
+        __atomic_store_n(&progress.percent, 100U, __ATOMIC_RELAXED);
+        view_port_update(view);
+        furi_delay_ms(50);
+    }
     mbedtls_md_free(&context);
     gui_remove_view_port(gui, view);
     view_port_free(view);
