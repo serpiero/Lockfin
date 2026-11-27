@@ -11,4 +11,6 @@ App(
     fap_version=(0, 26),
     fap_libs=["mbedtls", "ble_profile"],
     fap_description="Standalone encrypted password manager",
+    fap_author="SERPIERO",
+    fap_weburl="https://github.com/serpiero/Lockfin",
 )

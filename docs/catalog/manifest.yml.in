@@ -1,0 +1,10 @@
+# Draft only. Replace both placeholders after the submission gates are complete.
+sourcecode:
+  type: git
+  location:
+    origin: https://github.com/serpiero/Lockfin.git
+    commit_sha: __APPROVED_40_CHARACTER_COMMIT_SHA__
+description: "@docs/catalog/description.md"
+changelog: "@docs/catalog/changelog.md"
+screenshots:
+  - __ORIGINAL_QFLIPPER_DUMMY_VAULT_PNG_PATH__

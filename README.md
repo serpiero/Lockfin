@@ -143,8 +143,8 @@ Companion detects Momentum 012 and Official 1.5.1 and offers the matching Lockfi
 | Platform | Release file | Status |
 |---|---|---|
 | Linux x86_64 | `Lockfin-0.6.9-x86_64.AppImage` | Tested locally |
-| Windows x86_64 | `Lockfin-0.6.9-Windows-Setup.exe` | Native installer; unsigned; runner validation required. |
-| macOS Apple Silicon | `Lockfin-0.6.9-macOS-Apple-Silicon.dmg` | Native DMG; ad-hoc only, not notarized; runner validation required. |
+| Windows x86_64 | `Lockfin-0.6.9-Windows-Setup.exe` | Built and smoke-tested on Windows runner; unsigned. |
+| macOS Apple Silicon | `Lockfin-0.6.9-macOS-Apple-Silicon.dmg` | Built and smoke-tested on Apple Silicon runner; ad-hoc only, not notarized. |
 
 **Launch Companion.** On Linux, make the AppImage executable and run it. On Windows x86_64, use the Setup EXE; Python is bundled. On Apple Silicon macOS, open the DMG and drag **Lockfin.app** to **Applications**. Intel Macs are not supported by this runtime lock. The `*-Python.zip` files are optional source packages and require Python 3.10+; they are not native installers.
 
@@ -168,7 +168,7 @@ The release includes `SHA256SUMS` for checking downloaded files. [Release files]
 
 ### Device unlock measurements
 
-Physical Momentum 012 measurements at 600,000 iterations: master password median **<X> s** over three runs; Quick PIN median **<Y> s** over three runs. **These are placeholders, not measured results.** Time from submitting the credential to the unlocked account list. Quick PIN unwraps a device-bound key and does not repeat PBKDF2.
+Physical Momentum 012 measurements at 600,000 iterations: master password median **`<X>` s** over three runs; Quick PIN median **`<Y>` s** over three runs. **These are placeholders, not measured results.** Time from submitting the credential to the unlocked account list. Quick PIN unwraps a device-bound key and does not repeat PBKDF2.
 
 Hardware validation is pending: measure all six runs, confirm the master-password percentage and Quick PIN loading state on Momentum 012 and Official 1.5.1, and open a dummy vault actually created by Lockfin 0.25 in 0.26. The updated app displays an older-KDF notice after either successful unlock route. Synthetic legacy-format tests establish format compatibility; they do not replace this device check.
 
@@ -185,6 +185,8 @@ The current source creates and re-encrypts vaults with **600,000 PBKDF2-HMAC-SHA
 Earlier published binaries predate this source change: they write 100,000 iterations and reject costs above 500,000. Update both sides from compatible builds before transferring a newly upgraded vault. The LMV1/LMV2 format, 40-byte header and header authentication as GCM AAD are unchanged.
 
 **Device unlock timing at 600,000 iterations:** pending measurement on a physical Flipper. No desktop estimate is presented as a device result.
+
+Catalog preparation and remaining submission gates are listed in [the catalog checklist](docs/catalog/SUBMISSION.md). No catalog submission has been made.
 
 ## License and credits
 
