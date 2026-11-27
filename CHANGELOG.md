@@ -1,8 +1,10 @@
 # Changelog
 
-## Companion 0.6.9 / Flipper 0.26 — unreleased
+## Companion 0.6.9 / Flipper 0.26
 
 ### Security and migration
+
+- The maintainer manually verified on device that a dummy vault created by 0.25 opens in 0.26 and shows the older-KDF notice.
 
 - New vaults and master-password changes use 600,000 PBKDF2-HMAC-SHA256 iterations; readers accept up to 2,000,000. The LMV1/LMV2 layout and authenticated 40-byte header are unchanged.
 - Existing vaults keep opening because their iteration count is read from the header. To migrate, update both applications and run `python vault.py passwd <vault.lmv>` or choose **Manage → Change vault password** on the updated Flipper. An ordinary device save **preserves the old cost**; it does not re-encrypt at 600,000 iterations. Older app binaries reject costs above 500,000.

@@ -27,4 +27,4 @@ No unperformed physical check is marked PASS. Back cancellation: the derivation 
 
 ## Legacy check
 
-Pending the separate legacy-hardware validation block. Synthetic desktop compatibility tests alone are not hardware evidence.
+**PASS, manually confirmed by the maintainer on 2026-11-26:** a dummy vault created by Lockfin 0.25 opens in 0.26 and displays the older-KDF notice. This is a human-reported physical-device result; it is separate from the synthetic desktop tests and the earlier incomplete USB probe. No claim is made here about typing credentials or physical screen validation on Official firmware.

@@ -12,6 +12,6 @@ New vaults use AES-256-GCM with PBKDF2-HMAC-SHA256 at 600,000 iterations. The SD
 
 Authenticator, U2F and experimental FIDO2 are separate apps with separate credentials. Their shortcuts are conveniences, not additional hardened authentication. Do not use Lockfin as your only vault for banking, primary email or a domain registrar.
 
-[Full documentation](https://github.com/serpiero/Lockfin/tree/hardening) · [Private security reports](https://github.com/serpiero/Lockfin/blob/hardening/SECURITY.md)
+[Full documentation](https://github.com/serpiero/Lockfin/tree/main) · [Private security reports](https://github.com/serpiero/Lockfin/blob/main/SECURITY.md)
 
 Unofficial third-party tool, not affiliated with Flipper Devices Inc. GPL-3.0.
