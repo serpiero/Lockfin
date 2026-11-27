@@ -1,6 +1,6 @@
 # Dependencias de ejecucion y herramientas de construccion fijadas para Python 3.10-3.15.
 # Resolucion universal: Linux, Windows y macOS. Instalar con --require-hashes.
-# PyInstaller y uFBT son herramientas de construccion; la aplicacion no las importa.
+# PyInstaller es una herramienta de empaquetado; la aplicacion no la importa.
 --only-binary :all:
 
 altgraph==0.17.5 \
@@ -170,12 +170,6 @@ cryptography==50.0.2 \
 macholib==1.16.4 ; sys_platform == 'darwin' \
     --hash=sha256:da1a3fa8266e30f0ce7e97c6a54eefaae8edd1e5f86f3eb8b95457cae90265ea \
     --hash=sha256:f408c93ab2e995cd2c46e34fe328b130404be143469e41bc366c807448979362
-mslex==1.3.0 \
-    --hash=sha256:641c887d1d3db610eee2af37a8e5abda3f70b3006cdfd2d0d29dc0d1ae28a85d \
-    --hash=sha256:c7074b347201b3466fc077c5692fbce9b5f62a63a51f537a53fbbd02eff2eea4
-oslex==2.0.0 \
-    --hash=sha256:30d9f4a7201bdce3ab7d9cfc0f9ee9e18c423b2b1d1668141b0dd3594b368ffe \
-    --hash=sha256:f1c2944072aafcb06b6ee8a6c018d9ebb8a7f43d7cf0b6630b4f5d7be45f6ae4
 packaging==26.4 \
     --hash=sha256:81383611a09c1bc0b08b76e0fd5829d7c6824c65b27a6aee339da133f4233ea2 \
     --hash=sha256:c4b671c41ddb9bf26e543c37723610d28fb6bf7affc4da17cf048d419d2c062a
@@ -228,6 +222,3 @@ shiboken6==6.12.0 \
 typing-extensions==4.16.0 ; python_full_version < '3.11' \
     --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8 \
     --hash=sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5
-ufbt==0.2.6 \
-    --hash=sha256:4f1a858858598ed2e25bbab69e2ea604bc00758c3b1e8ecf897a29866157363b \
-    --hash=sha256:ee3b5788b4034694aea594fd44777eab4049968d94c5f39ad93df8b05d8c8849

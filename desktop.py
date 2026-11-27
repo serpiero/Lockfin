@@ -21,6 +21,7 @@ import importers
 import vault
 import device_storage as device
 
+VERSION = '0.6.9'
 PROJECT = Path(__file__).resolve().parent
 PRIVATE = PROJECT / 'private'
 
@@ -1125,6 +1126,7 @@ class VaultApp:
 def main():
     parser = argparse.ArgumentParser(description='Lockfin companion')
     parser.add_argument('--smoke-test', action='store_true')
+    parser.add_argument('--version', action='version', version=VERSION)
     args = parser.parse_args()
     # The Linux bundle ships the desktop portal plugin. KDE's host Qt
     # integration plugin is not part of the bundle.
@@ -1134,6 +1136,7 @@ def main():
         os.environ['QT_QPA_PLATFORMTHEME'] = 'xdgdesktopportal'
     qt = QApplication(sys.argv)
     qt.setApplicationName('Lockfin')
+    qt.setApplicationVersion(VERSION)
     qt.setDesktopFileName('lockfin')
     icon = PROJECT / 'assets/lockfin.svg'
     if icon.is_file():

@@ -81,3 +81,6 @@ captures/
 !assets/lockfin_10px.png
 .DS_Store
 Thumbs.db
+
+# Dependencias publicas para compilar los FAP.
+!requirements-build.txt
