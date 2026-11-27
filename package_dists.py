@@ -4,17 +4,38 @@ from pathlib import Path
 import hashlib
 import json
 import os
+import re
 import shutil
 import zipfile
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / 'dist' / 'pc'
 VERSION = '0.6.9'
-FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c','requirements.lock','requirements-build.txt']
+FILES = ['desktop.py','device_storage.py','flipper_sync.py','importers.py','vault.py','start.py','assets/lockfin.svg','assets/lockfin_10px.png','LICENSE','third_party/qflipper/NOTICE.md','third_party/qflipper/LICENSE','third_party/qflipper/GridBackground.qml','application.fam','login_manager.c','requirements-build.txt']
+
+
+def filtered_runtime_lock(path):
+    if not path.is_file():
+        raise FileNotFoundError('Missing requirements.lock; refusing to create unlocked packages.')
+    text = path.read_text()
+    # Se elimina cada entrada completa, incluidos todos sus hashes y marcadores.
+    blocks = re.split(r'(?m)(?=^[A-Za-z0-9][A-Za-z0-9_.-]*==)', text)
+    kept = []
+    for block in blocks:
+        match = re.match(r'([A-Za-z0-9_.-]+)==', block)
+        if match and match.group(1).lower().replace('_', '-') in {'ufbt', 'oslex', 'mslex'}:
+            continue
+        kept.append(block)
+    filtered = ''.join(kept)
+    if '--hash=sha256:' not in filtered:
+        raise ValueError('requirements.lock must contain pinned SHA256 hashes.')
+    return filtered.encode('utf-8')
 
 
 def build():
+    locked = filtered_runtime_lock(ROOT / 'requirements.lock')
     payload = {name:(ROOT/name).read_bytes() for name in FILES}
+    payload['requirements.lock'] = locked
     requirements = '\n'.join(line for line in (ROOT/'requirements.txt').read_text().splitlines()
                              if line and not line.startswith('ufbt'))+'\n'
     payload['requirements.txt'] = requirements.encode()
