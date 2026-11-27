@@ -6,6 +6,12 @@ Passwords · Authenticator · U2F · Passkeys (FIDO2)
 
 Keep your logins on your Flipper Zero. Add an account, generate a password, and mark it as a favorite right on the device. When you need to sign in, pick the account and let your Flipper type the username and password over USB or Bluetooth.
 
+## How is this different from BadUSB?
+
+Both can type credentials using HID. For one account with fixed credentials, a simple BadUSB script is usually the simpler choice. BadUSB can also run more elaborate workflows; fixed strings are just this example.
+
+Lockfin adds an encrypted vault with separate account entries, an on-device picker, password generation, favorites and a PIN lock. You explicitly choose a username, password, **Tab**, **Shift+Tab** or **Enter** instead of replaying a prepared sequence of keystrokes. The difference is what gets typed and how you choose it; the HID mechanism is shared.
+
 **Watch Lockfin on the Flipper · 1:11**
 
 https://github.com/user-attachments/assets/071d6a79-2f23-46e4-b461-c0cb41be5e99
@@ -90,9 +96,24 @@ Companion preserves your existing accounts and favorites while saving the additi
 
 Both the Momentum and official-firmware Lockfin builds include shortcuts to Authenticator, U2F and FIDO2. Lockfin types your login; each authentication app handles its own credentials. Use the firmware’s built-in U2F app, install Flipper Authenticator at `/ext/apps/Tools/totp.fap`, and install FIDO2 Security Key at `/ext/apps/USB/fido2_security_key.fap`. External FAPs must match the firmware and API installed on your Flipper; the presence of a shortcut does not establish compatibility with every provider build. These apps and their credentials are separate from the Lockfin vault.
 
+Flipper firmware already supports opening an app through long-press Left/Right shortcuts. Lockfin exposes the authentication apps while you are viewing a specific login, keeping the navigation in that account's context. This is convenience, not a new authentication capability: Lockfin does not pass the selected account or synchronize its credentials with those apps.
+
 - **One-time codes.** The shortcut opens **Flipper Authenticator**, by **akopachov and contributors**. Enroll the account’s token in Authenticator to see its code there. [Flipper Authenticator](https://github.com/akopachov/flipper-zero_authenticator)
-- **U2F.** The shortcut opens the firmware’s **U2F app**. Register your Flipper as a security key with the website, then connect it over USB when the site asks for it.
-- **Passkeys.** The shortcut opens **FIDO2 Security Key**, by **Ege Guray Ertan**. This experimental provider handles passkey registration and sign-in over USB, with support for up to eight resident credentials. It stores its credentials separately from the Lockfin vault and manages its own client PIN. Register it with each site before using it to sign in. [FIDO2 Security Key · GPL-3.0](https://github.com/Dospacite/flipperzero-fido2/tree/a9e7638ba8e8dca0a596d7182d5d2ed77654e7ff)
+- **U2F.** The shortcut opens the firmware’s **U2F app**, an educational second-factor implementation. Flipper has no dedicated tamper-resistant secure element; treat this as an experimental integration, not a hardened hardware security key. If you test registration, keep an independent recovery method.
+- **Passkeys (FIDO2).** The shortcut opens **FIDO2 Security Key**, by **Ege Guray Ertan**. This experimental provider supports up to **eight resident credentials** over USB and manages its **own client PIN**, separate from Lockfin Quick PIN. Its credentials are separate from the vault. It is not a certified or tamper-resistant authenticator; external provider builds must match your firmware/API. [FIDO2 Security Key · GPL-3.0](https://github.com/Dospacite/flipperzero-fido2/tree/a9e7638ba8e8dca0a596d7182d5d2ed77654e7ff)
+
+Neither integration is a reason to buy a Flipper as a security key.
+
+## Security model and limitations
+
+- **Device protection.** Flipper has no dedicated tamper-resistant secure element. Its MCU provides a device-key/secure-enclave mechanism used by Quick PIN, but this does not make Lockfin a hardened authenticator or protect against compromised firmware.
+- **SD storage.** The SD card filesystem is unencrypted. Lockfin `.lmv` vault contents are encrypted and authenticated, but filenames, other apps' files and plaintext exports are not protected by vault encryption.
+- **Typed output.** USB/BLE output goes to whichever field or application is focused on the host. Check the destination before sending credentials; Lockfin cannot verify it.
+- **Quick PIN.** Six digits, visible while typing. Three failed attempts disable quick unlock until it is enrolled again. It is a convenience on that device, not a replacement for a strong master password or physical protection.
+- **Desktop trust.** Companion trusts the host. An unlocked vault and its credentials exist in process memory; malware, screen capture or a keylogger can defeat that boundary.
+- **Authentication apps.** Authenticator, U2F and FIDO2 remain separate apps with separate credentials and security properties. Flipper U2F is a second factor; its implementation and the experimental FIDO2 integration are not hardened authenticators.
+
+Do not use Lockfin as your only vault for banking, primary email or your domain registrar. Keep an independent, tested recovery method and encrypted backups. Report vulnerabilities through the [security policy](SECURITY.md).
 
 ## Roadmap
 
