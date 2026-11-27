@@ -2,7 +2,7 @@
 
 ## Timing and profiling
 
-The maintainer reports Momentum 012 with 350 entries: 43 s master-password unlock plus 3 s to a usable list; Quick PIN effectively instant. These observations are not a claimed three-run median.
+The maintainer reports reproducible master-password unlocks of about **4 minutes** on Momentum 012 with 350 entries at **600,000 iterations**. This corrects the earlier timing claim. The cost repeats on every master-password unlock, not only first setup. Quick PIN remains effectively instant. A separate list transition was previously reported at about 3 seconds. No three-run median is claimed.
 
 A separate probe ran the real current C loader and list-index functions on physical Momentum 012, using isolated synthetic 600,000-iteration vaults and a supplied fixture key to exclude PBKDF2. The tick frequency was 1,000 Hz. No personal vault, PIN file, keyboard pairing or firmware was modified.
 
@@ -28,3 +28,9 @@ No unperformed physical check is marked PASS. Back cancellation: the derivation 
 ## Legacy check
 
 **PASS, manually confirmed by the maintainer on 2026-11-26:** a dummy vault created by Lockfin 0.25 opens in 0.26 and displays the older-KDF notice. This is a human-reported physical-device result; it is separate from the synthetic desktop tests and the earlier incomplete USB probe. No claim is made here about typing credentials or physical screen validation on Official firmware.
+
+## Follow-up unlock diagnostic — not yet run
+
+Keep 600,000 iterations and use controlled synthetic vaults with 5 and 350 entries, the same master password and the same device/firmware conditions. Perform three full master-password unlocks at each size, bypassing Quick PIN without supplying a cached key. Record every duration and the median per size. Compare sizes before attributing the four-minute cost to entry count.
+
+If the cost grows with entries, separately time SD/header reading, PBKDF2, GCM, parse and index phases at both sizes. Name the phase that grows before making any optimization. The earlier cached-key profile excludes PBKDF2 and is not a substitute for these six unlocks. This diagnostic has been deferred; no new device measurements or scaling conclusion are claimed.
