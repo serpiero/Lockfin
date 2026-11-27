@@ -32,7 +32,7 @@ def build():
         env = dict(os.environ, UFBT_HOME=str(stage / 'sdk-home'))
         def ufbt(*args):
             subprocess.run([sys.executable, '-m', 'ufbt', *args], cwd=stage, env=env, check=True)
-        ufbt('update', '--local', str(archive))
+        ufbt('update', '--hw-target', 'f7', '--local', str(archive))
         symbols = stage / 'sdk-home/current/sdk_headers/f7_sdk/targets/f7/api_symbols.csv'
         rows = csv.reader(symbols.read_text().splitlines())
         if next(row[2] for row in rows if row[0] == 'Version') != api:
