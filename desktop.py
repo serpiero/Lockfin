@@ -512,7 +512,8 @@ class VaultApp:
                 QStandardPaths.StandardLocation.AppDataLocation)) / 'vaults'
         else:
             self.private_dir = PRIVATE
-        self.private_dir.mkdir(parents=True, exist_ok=True)
+        self.private_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+        self.private_dir.chmod(0o700)
         self.root.setStyleSheet('''
             QMainWindow{background:transparent;}
             QWidget{background:transparent;color:#ff9722;}
@@ -1113,6 +1114,10 @@ class VaultApp:
             self.adding = False
             self.show_candidates(self.mounted.records, f'Device vault · {len(self.mounted.records)} accounts')
             return
+        self.lock()
+
+    def lock(self):
+        # Se descartan referencias; Python no permite borrar cadenas inmutables.
         self.table.blockSignals(True)
         self.records, self.candidates = [], []
         self.master = self.path = self.original = self.mounted = None
@@ -1120,6 +1125,8 @@ class VaultApp:
         self.dirty = False
         self.table.setRowCount(0)
         self.table.blockSignals(False)
+        self.search.clear()
+        self.source.clear()
         self.stack.setCurrentIndex(0); self.refresh()
 
 

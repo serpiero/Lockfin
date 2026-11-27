@@ -85,6 +85,7 @@ class DevicePull(QThread):
             name = 'flipper-' + hashlib.sha256(blob).hexdigest() + '.lmv'
             folder = self.directory / 'device-backups'
             folder.mkdir(mode=0o700, parents=True, exist_ok=True)
+            folder.chmod(0o700)
             path = folder / name
             try:
                 vault.atomic_write(path, blob)
