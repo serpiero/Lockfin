@@ -277,6 +277,7 @@ static bool lm_derive_key(
     ViewPort* view = view_port_alloc();
     view_port_draw_callback_set(view, lm_key_progress, &progress);
     gui_add_view_port(gui, view, GuiLayerFullscreen);
+    view_port_update(view);
     mbedtls_md_context_t context;
     mbedtls_md_init(&context);
     uint8_t block[20] = {0};
@@ -1080,6 +1081,17 @@ done:
     lm_clear(&record, sizeof(record));
 }
 
+/* El PIN recupera la clave envuelta; no vuelve a ejecutar PBKDF2. */
+static void lm_pin_progress(Canvas* canvas, void* context) {
+    UNUSED(context);
+    canvas_clear(canvas);
+    canvas_set_font(canvas, FontPrimary);
+    canvas_draw_str(canvas, 5, 20, "Unlocking vault");
+    canvas_set_font(canvas, FontSecondary);
+    canvas_draw_str(canvas, 5, 39, "Checking Quick PIN...");
+    canvas_draw_str(canvas, 5, 55, "Please wait");
+}
+
 static bool lm_quick_unlock(LoginManager* app, Gui* gui, bool* available) {
     *available = false;
     PinRecord record = {0};
@@ -1100,6 +1112,13 @@ static bool lm_quick_unlock(LoginManager* app, Gui* gui, bool* available) {
         char pin[7] = {0};
         _Alignas(4) uint8_t wrapping[32] = {0}, key[32] = {0};
         bool entered = lm_pin_entry(gui, "Quick PIN (Back: master)", pin);
+        ViewPort* busy = NULL;
+        if(entered) {
+            busy = view_port_alloc();
+            view_port_draw_callback_set(busy, lm_pin_progress, NULL);
+            gui_add_view_port(gui, busy, GuiLayerFullscreen);
+            view_port_update(busy);
+        }
         bool prepared = entered && lm_pin_wrap_key(&record, pin, wrapping) &&
                         lm_pin_counter(++record.failures);
         bool valid = prepared && furi_hal_crypto_gcm_decrypt_and_verify(wrapping, record.nonce,
@@ -1109,6 +1128,10 @@ static bool lm_quick_unlock(LoginManager* app, Gui* gui, bool* available) {
         lm_clear(pin, sizeof(pin));
         lm_clear(wrapping, sizeof(wrapping));
         lm_clear(key, sizeof(key));
+        if(busy) {
+            gui_remove_view_port(gui, busy);
+            view_port_free(busy);
+        }
         if(!prepared) {
             if(entered) *available = false;
             return false;
@@ -1235,7 +1258,7 @@ static void lm_manage(LoginManager* app, Gui* gui) {
 
 /* The attempted password stays in this prompt only until Back, Exit or success.
    Retrying always reopens the file and authenticates it from the supplied master. */
-static bool lm_startup(LoginManager* app, Gui* gui) {
+static bool lm_startup_unlock(LoginManager* app, Gui* gui) {
     app->vault_state = lm_probe();
     if(app->vault_state == VaultCryptoError || app->vault_state == VaultBadFormat) {
         lm_notice(gui, app->vault_state == VaultBadFormat ? "Invalid vault file" : "Check SD card");
@@ -1283,6 +1306,18 @@ static bool lm_startup(LoginManager* app, Gui* gui) {
     }
     lm_clear(master, sizeof(master));
     return unlocked;
+}
+
+/* El aviso solo se muestra despues de autenticar, por ambas rutas. */
+static bool lm_startup(LoginManager* app, Gui* gui) {
+    if(!lm_startup_unlock(app, gui)) return false;
+    if(app->rounds < LM_KDF_ITERATIONS) {
+        char cost[32];
+        snprintf(cost, sizeof(cost), "%lu iterations", (unsigned long)app->rounds);
+        const char* const items[] = {cost, "Change vault password"};
+        lm_choice(gui, "Older KDF: upgrade", items, COUNT_OF(items), 0);
+    }
+    return true;
 }
 
 static void lm_fit(Canvas* canvas, int x, int baseline, unsigned width, const char* text) {
