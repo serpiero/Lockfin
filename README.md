@@ -22,7 +22,7 @@ Manage passwords on the device, type over USB or Bluetooth, and open Authenticat
 
 Already have your passwords somewhere else? **Lockfin Companion** helps you install Lockfin, bring in the accounts you choose, and save them to your Flipper. You can add them to an existing vault and keep your other logins and favorites.
 
-**Preparing Companion 0.6.9 and Lockfin 0.26 — not published yet.**
+**Companion 0.6.9 and Lockfin 0.26.**
 
 [Download Lockfin and Companion](https://github.com/serpiero/Lockfin/releases)
 
@@ -111,7 +111,8 @@ Neither integration is a reason to buy a Flipper as a security key.
 - **Device protection.** Flipper has no dedicated tamper-resistant secure element. Its MCU provides a device-key/secure-enclave mechanism used by Quick PIN, but this does not make Lockfin a hardened authenticator or protect against compromised firmware.
 - **SD storage.** The SD card filesystem is unencrypted. Lockfin `.lmv` vault contents are encrypted and authenticated, but filenames, other apps' files and plaintext exports are not protected by vault encryption.
 - **Typed output.** USB/BLE output goes to whichever field or application is focused on the host. Check the destination before sending credentials; Lockfin cannot verify it.
-- **Quick PIN.** Six digits, visible while typing. Three failed attempts disable quick unlock until it is enrolled again. It is a convenience on that device, not a replacement for a strong master password or physical protection.
+- **Quick PIN.** Six digits, visible while typing. Three failed attempts force the master password, which takes about 43 seconds on the measured device; Quick PIN must then be enrolled again. It is a convenience on that device, not a replacement for a strong master password or physical protection.
+- **Capacity and responsiveness.** A vault is capped at 500 entries and 32 KiB of plaintext. Fuller vaults take longer to construct and sort the account list.
 - **Desktop trust.** Companion trusts the host. An unlocked vault and its credentials exist in process memory; malware, screen capture or a keylogger can defeat that boundary.
 - **Authentication apps.** Authenticator, U2F and FIDO2 remain separate apps with separate credentials and security properties. Flipper U2F is a second factor; its implementation and the experimental FIDO2 integration are not hardened authenticators.
 
@@ -168,9 +169,13 @@ The release includes `SHA256SUMS` for checking downloaded files. [Release files]
 
 ### Device unlock measurements
 
-Physical Momentum 012 measurements at 600,000 iterations: master password median **`<X>` s** over three runs; Quick PIN median **`<Y>` s** over three runs. **These are placeholders, not measured results.** Time from submitting the credential to the unlocked account list. Quick PIN unwraps a device-bound key and does not repeat PBKDF2.
+Measured by the maintainer on **Momentum 012 with a 350-entry vault**: master-password unlock took **about 43 seconds**, followed by **about 3 seconds until the account list was usable**. Quick PIN unlock was **effectively instant**. These are reported device observations, not medians from a three-run experiment; no precise subsecond PIN timing is claimed.
 
-Hardware validation is pending: measure all six runs, confirm the master-password percentage and Quick PIN loading state on Momentum 012 and Official 1.5.1, and open a dummy vault actually created by Lockfin 0.25 in 0.26. The updated app displays an older-KDF notice after either successful unlock route. Synthetic legacy-format tests establish format compatibility; they do not replace this device check.
+The **600,000 iterations are a deliberate trade for resistance to offline guessing against a copied vault file**. The master password is the rare fallback path; Quick PIN is the normal day-to-day path on the enrolled device. The on-screen percentage animation covers the master-password derivation wait. Quick PIN unwraps the device-bound key without PBKDF2 and uses a brief loading state instead of a 43-second derivation. **Back does not cancel an active derivation**; it switches to the master-password route at the PIN prompt.
+
+An isolated physical-device profile with synthetic accounts measured 350-entry read/GCM/parse/index phases at 28/14/59/305 ms, and 500 entries at 36/20/96/458 ms. This confirms increasing list work but does not reproduce the entire reported 3-second gap. A single Shell sort builds the display index on open; it is not a redundant second sort. Keyboard setup and the complete interactive transition were not included in that profile, so the remaining delay is not attributed to parsing alone. No speculative sort optimization was applied.
+
+Official 1.5.1 screen behavior and an end-to-end interactive Back test still need manual verification. See [device validation](docs/device-validation-0.6.9.md) for the exact evidence and limits.
 
 ### Reproducible builds
 
@@ -184,7 +189,7 @@ The current source creates and re-encrypts vaults with **600,000 PBKDF2-HMAC-SHA
 
 Earlier published binaries predate this source change: they write 100,000 iterations and reject costs above 500,000. Update both sides from compatible builds before transferring a newly upgraded vault. The LMV1/LMV2 format, 40-byte header and header authentication as GCM AAD are unchanged.
 
-**Device unlock timing at 600,000 iterations:** pending measurement on a physical Flipper. No desktop estimate is presented as a device result.
+**Device timing:** about 43 seconds for the master password and about 3 more seconds to a usable list on Momentum 012 with 350 entries; Quick PIN effectively instant. See the measured-device details above.
 
 Catalog preparation and remaining submission gates are listed in [the catalog checklist](docs/catalog/SUBMISSION.md). No catalog submission has been made.
 
