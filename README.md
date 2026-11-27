@@ -1,6 +1,6 @@
 # Lockfin
 
-[![Checks](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml/badge.svg?branch=hardening)](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml?query=branch%3Ahardening)
+[![Checks](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/serpiero/Lockfin/actions/workflows/checks.yml?query=branch%3Amain)
 
 **Your all-in-one login and password manager for Flipper Zero.**
 
@@ -176,7 +176,7 @@ Hardware validation is pending: measure all six runs, confirm the master-passwor
 
 Create an isolated Python environment and install runtime and packaging dependencies with `python -m pip install --require-hashes -r requirements.lock`. PyInstaller is pinned in that lock. The AppImage builder repeats this hash-checked installation before freezing the application.
 
-FAP builders install uFBT separately with `python -m pip install -r requirements-build.txt`; uFBT and its command-line parsing dependencies are excluded from the runtime lock. Use the SDK matching Momentum 012 / API 87.1 or Official 1.5.1 / API 88.2. Both FAPs must be rebuilt from the same current `login_manager.c` before packaging Companion.
+FAP builders install uFBT separately with `python -m pip install --require-hashes -r requirements-build.txt`; uFBT and its command-line parsing dependencies are excluded from the runtime lock. Use the SDK matching Momentum 012 / API 87.1 or Official 1.5.1 / API 88.2. Both FAPs must be rebuilt from the same current `login_manager.c` before packaging Companion.
 
 ### KDF compatibility and device timing
 
