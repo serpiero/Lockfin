@@ -2,11 +2,11 @@
 
 ## Supported versions
 
-Security fixes target the current `hardening` branch, preparing Companion **0.6.9** and Flipper app **0.26**. These versions are unreleased and have not completed physical-device or native Windows/macOS validation. This policy is not a security certification.
+Security fixes target the current `main` branch and Companion **0.6.9** / Flipper app **0.26**. Native Windows/macOS builds passed packaged-app smoke tests; broader interactive testing and Official-firmware screen checks remain incomplete. This policy is not a security certification.
 
 | Version | Security maintenance |
 |---|---|
-| Companion 0.6.9 / Flipper 0.26, current hardening branch | Active security work; validation pending |
+| Companion 0.6.9 / Flipper 0.26 | Active security maintenance on main |
 | Companion 0.6.8 / Flipper 0.25 and earlier | Migration assistance only; fixes target the current branch |
 
 Older vaults remain readable using the iteration count in their authenticated header. Upgrade both applications before re-encrypting: older Flipper binaries reject the new 600,000-iteration cost. Re-encrypt using `python vault.py passwd <vault.lmv>` or **Manage → Change vault password** on the updated device app. An ordinary device save preserves the stored cost.
