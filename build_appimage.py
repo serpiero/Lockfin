@@ -59,7 +59,7 @@ def build():
     source = appdir / 'usr/share/lockfin/source'
     source.mkdir(parents=True)
     for name in ('desktop.py', 'device_storage.py', 'flipper_sync.py', 'importers.py', 'vault.py', 'start.py',
-                 'build_appimage.py', 'login_manager.c', 'application.fam', 'requirements.txt', 'LICENSE'):
+                 'build_appimage.py', 'login_manager.c', 'application.fam', 'requirements.txt', 'requirements.lock', 'LICENSE'):
         shutil.copy2(ROOT / name, source / name)
     shutil.copytree(ROOT / 'assets', source / 'assets')
     shutil.copytree(ROOT / 'third_party/qflipper', source / 'third_party/qflipper')

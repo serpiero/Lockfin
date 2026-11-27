@@ -15,6 +15,7 @@ import venv
 
 PROJECT = Path(__file__).resolve().parent
 ENVIRONMENT = PROJECT / '.venv'
+LOCKFILE = PROJECT / 'requirements.lock'
 
 
 def environment_python():
@@ -22,10 +23,12 @@ def environment_python():
 
 
 def prepare():
+    if not LOCKFILE.is_file():
+        raise FileNotFoundError('Missing requirements.lock. Restore it before setting up Lockfin.')
     print('Preparing the application; only needed on first launch.', flush=True)
     venv.EnvBuilder(with_pip=True, symlinks=os.name != 'nt').create(ENVIRONMENT)
     subprocess.run([str(environment_python()), '-m', 'pip', '--disable-pip-version-check',
-                    'install', '-r', str(PROJECT / 'requirements.txt')], cwd=PROJECT, check=True)
+                    'install', '--require-hashes', '-r', str(LOCKFILE)], cwd=PROJECT, check=True)
 
 
 def has_dependencies():
